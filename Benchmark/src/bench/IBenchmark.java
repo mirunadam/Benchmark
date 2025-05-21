@@ -6,4 +6,5 @@ public interface IBenchmark {
     void initialize(Object... params); // Setup/preparation
     void clean();                // Cleanup after run
     void cancel();              // Graceful cancel support
+    void warmup();
 }

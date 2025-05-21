@@ -70,4 +70,26 @@ public class DemoBenchmark implements IBenchmark{
         running = false;
     }
 
+    @Override
+    public void warmup() {
+        // Clone the original array so we don't modify the real one
+        int[] backup = Arrays.copyOf(array, array.length);
+
+        // Run quickSort on a small subset (e.g., 10% of the array or up to 10,000 elements)
+        int warmupSize = Math.min(10000, n / 10);
+
+        // Temporarily sort a small chunk
+        int[] warmupArray = Arrays.copyOf(backup, warmupSize);
+
+        // Temporarily swap in the warmup array
+        int[] original = this.array;
+        this.array = warmupArray;
+
+        quickSort(0, warmupSize - 1);
+
+        // Restore original array
+        this.array = original;
+    }
+
+
 }

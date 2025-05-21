@@ -20,6 +20,15 @@ public class DummyBenchmark implements IBenchmark {
     public void initialize(Object... params) {
         System.out.println("DummyBenchmark initialized with " + params.length + " param(s)");
     }
+    public void warmup() {
+        int warmupIterations = 10000; // 1% of the default run, enough to warm up the JIT
+
+        for (int i = 0; i < warmupIterations && running; i++) {
+            Math.sqrt(i); // Same operation as in run
+        }
+
+        System.out.println("DummyBenchmark warmup completed.");
+    }
 
     @Override
     public void clean() {
