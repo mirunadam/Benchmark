@@ -104,7 +104,7 @@ public class CPUDigitsOfPi implements IBenchmark {
         return result;
     }
 
-    public void warmup() {
+    public void warmUp() {
         // Compute first 1000 digits as warmup
         int originalDigits = this.digits;
         this.digits = 1000;
@@ -121,6 +121,11 @@ public class CPUDigitsOfPi implements IBenchmark {
     }
     public BigDecimal getPi() {
         return pi;
+    }
+
+    @Override
+    public String getResult() {
+        return "";
     }
 }
 

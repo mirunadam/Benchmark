@@ -25,13 +25,18 @@ public class SleepBenchmark implements IBenchmark{
         n = 0;
     }
 
-    public void warmup() {
+    public void warmUp() {
         try {
             Thread.sleep(Math.min(50, n / 10)); // Sleep for 10% of n, or max 50ms
             System.out.println("SleepBenchmark warmup completed.");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String getResult() {
+        return "Slept for " + n + " ms";
     }
 
     public void cancel() {

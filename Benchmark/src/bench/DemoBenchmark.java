@@ -71,7 +71,7 @@ public class DemoBenchmark implements IBenchmark{
     }
 
     @Override
-    public void warmup() {
+    public void warmUp() {
         // Clone the original array so we don't modify the real one
         int[] backup = Arrays.copyOf(array, array.length);
 
@@ -89,6 +89,11 @@ public class DemoBenchmark implements IBenchmark{
 
         // Restore original array
         this.array = original;
+    }
+
+    public String getResult(){
+        return String.format("Sorted %d elements. Min: %d, Max: %d",
+                array.length, array[0], array[array.length - 1]);
     }
 
 

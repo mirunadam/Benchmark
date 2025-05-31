@@ -34,7 +34,7 @@ public class TestCPUDigitsOfPi {
 
         bench.initialize(digits);
         log.write("Starting warmup...");
-        bench.warmup();
+        bench.warmUp();
         log.write("Warmup completed");
 
         for (int i = 0; i < runs; i++) {
