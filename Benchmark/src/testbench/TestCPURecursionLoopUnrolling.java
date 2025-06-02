@@ -1,11 +1,6 @@
 package testbench;
 
-import logging.ConsoleLogger;
-import logging.ILogger;
-import logging.TimeUnit;
-import timing.ITimer;
-import timing.Timer;
-import benchmark.cpu.CPURecursionLoopUnrolling;
+import bench.cpu.CPURecursionLoopUnrolling;
 
 public class TestCPURecursionLoopUnrolling {
     public static void main(String[] args) {

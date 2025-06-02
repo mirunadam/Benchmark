@@ -1,12 +1,10 @@
 package testbench;
 
-import logging.ConsoleLogger;
-import logging.FileLogger;
 import logging.ILogger;
 import logging.TimeUnit;
 import timing.ITimer;
 import timing.Timer;
-import benchmark.cpu.CPUFixedPoint;
+import bench.cpu.CPUFixedPoint;
 
 public class TestCPUFixedPoint {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package benchmark.cpu;
+package bench.cpu;
 
 import bench.IBenchmark;
 

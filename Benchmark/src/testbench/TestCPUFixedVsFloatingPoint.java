@@ -3,13 +3,11 @@ package testbench;
 import logging.ConsoleLogger;
 import logging.ILogger;
 import logging.TimeUnit;
-import logging.TimeUnit2;
 import timing.ITimer;
 import timing.Timer;
 import bench.IBenchmark;
-import benchmark.cpu.CPUFixedPoint;
-import benchmark.cpu.CPUFixedVsFloatingPoint;
-import benchmark.cpu.NumberRepresentation;
+import bench.cpu.CPUFixedVsFloatingPoint;
+import bench.cpu.NumberRepresentation;
 
 public class TestCPUFixedVsFloatingPoint {
 
