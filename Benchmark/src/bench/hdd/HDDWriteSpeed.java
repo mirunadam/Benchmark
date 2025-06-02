@@ -1,5 +1,6 @@
 package bench.hdd;
 
+import java.io.File;
 import java.io.IOException;
 
 import bench.IBenchmark;
@@ -7,6 +8,13 @@ import bench.IBenchmark;
 public class HDDWriteSpeed implements IBenchmark {
 
     private String result;
+    private final String prefix = "D:\\benchmark\\testfile_";  // Adjust if needed
+    private final String suffix = ".dat";
+    private final int repetitions = 5;
+
+    // Keep track of created test files for cleaning
+    private int maxFileIndex = -1;
+
     @Override
     public void initialize(Object... params) {
         // Optional: Use this to initialize test parameters if needed
@@ -32,39 +40,104 @@ public class HDDWriteSpeed implements IBenchmark {
         String option = (String) options[0];     // "fs" or "fb"
         boolean clean = (Boolean) options[1];    // true/false
 
-        String prefix = "D:\\benchmark\\testfile_";  // You can change to your valid local path
-        String suffix = ".dat";
-
-        int minIndex = 0;
-        int maxIndex = 8;
-
-        long fileSize = 256L * 1024 * 1024; // 256 MB
-        int bufferSize = 4 * 1024;          // 4 KB
-
-        double score;
         try {
             if (option.equals("fs")) {
-                score = writer.streamWriteFixedFileSize(prefix, suffix, minIndex, maxIndex, fileSize, clean);
+                long fileSize = 512L * 1024 * 1024;
+                int[] bufferSizes = {
+                        1 * 1024,
+                        4 * 1024,
+                        16 * 1024,
+                        64 * 1024,
+                        256 * 1024,
+                        1 * 1024 * 1024,
+                        4 * 1024 * 1024,
+                        16 * 1024 * 1024,
+                        64 * 1024 * 1024
+                };
+
+                System.out.println("Running fs mode: fixed file size = 512MB, varying buffer sizes...");
+                System.out.println("Buffer Size (KB), Average Write Speed (MB/s)");
+
+                int fileIndex = 0;
+
+                for (int bufSize : bufferSizes) {
+                    double sumSpeed = 0;
+                    for (int i = 0; i < repetitions; i++) {
+                        double speed = writer.streamWriteFixedFileSize(
+                                prefix, suffix, fileIndex, fileSize, bufSize, clean);
+                        sumSpeed += speed;
+                    }
+                    double avgSpeed = sumSpeed / repetitions;
+                    System.out.printf("%d, %.2f%n", bufSize / 1024, avgSpeed);
+                    fileIndex++;
+                }
+
+                maxFileIndex = bufferSizes.length - 1;
+                result = "fs benchmark completed. See printed speeds above.";
+
             } else if (option.equals("fb")) {
-                score = writer.streamWriteFixedBufferSize(prefix, suffix, minIndex, maxIndex, bufferSize, clean);
+                int bufferSize = 2 * 1024;
+                long[] fileSizes = {
+                        1L * 1024 * 1024,
+                        10L * 1024 * 1024,
+                        100L * 1024 * 1024,
+                        1024L * 1024 * 1024
+                };
+
+                System.out.println("Running fb mode: fixed buffer size = 2KB, varying file sizes...");
+                System.out.println("File Size (MB), Average Write Speed (MB/s)");
+
+                int fileIndex = 0;
+
+                for (long fSize : fileSizes) {
+                    double sumSpeed = 0;
+                    for (int i = 0; i < repetitions; i++) {
+                        double speed = writer.streamWriteFixedBufferSize(
+                                prefix, suffix, fileIndex, bufferSize, fSize, clean);
+                        sumSpeed += speed;
+                    }
+                    double avgSpeed = sumSpeed / repetitions;
+                    System.out.printf("%d, %.2f%n", fSize / (1024 * 1024), avgSpeed);
+                    fileIndex++;
+                }
+
+                maxFileIndex = fileSizes.length - 1;
+                result = "fb benchmark completed. See printed speeds above.";
+
             } else {
                 throw new IllegalArgumentException("Invalid mode: " + option + " (use 'fs' or 'fb')");
             }
-            result = String.format("Final write speed: %.2f MB/sec", score);
         } catch (IOException e) {
             e.printStackTrace();
             result = "Error during benchmark";
         }
     }
 
+
     @Override
     public void clean() {
-        // Optional: implement cleanup logic if needed
+        if (maxFileIndex < 0) {
+            System.out.println("No files to clean.");
+            return;
+        }
+
+        System.out.println("Cleaning up test files...");
+        for (int i = 0; i <= maxFileIndex; i++) {
+            File f = new File(prefix + i + suffix);
+            if (f.exists()) {
+                boolean deleted = f.delete();
+                if (deleted) {
+                    System.out.println("Deleted file: " + f.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to delete file: " + f.getAbsolutePath());
+                }
+            }
+        }
     }
 
     @Override
     public String getResult() {
-        return result; // You can return the final average write speed here if desired
+        return result;
     }
 
     @Override

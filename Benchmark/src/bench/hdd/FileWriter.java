@@ -35,39 +35,20 @@ public class FileWriter {
      *            - size of the benchmark file to be written in the disk
      * @throws IOException
      */
+    // Write a file with fixed file size and given buffer size, return speed MB/s
     public double streamWriteFixedFileSize(String filePrefix, String fileSuffix,
-                                           int minIndex, int maxIndex, long fileSize, boolean clean)
+                                           int fileIndex, long fileSize, int bufferSize, boolean clean)
             throws IOException {
+        String fileName = filePrefix + fileIndex + fileSuffix;
+        return writeFile(fileName, bufferSize, fileSize, clean);
+    }
 
-        System.out.println("Stream write benchmark with fixed file size");
-        int currentBufferSize = MIN_BUFFER_SIZE;
-        String fileName;
-        int fileIndex = 0;
-        benchScore = 0;
-
-        while (currentBufferSize <= MAX_BUFFER_SIZE
-                && fileIndex <= maxIndex - minIndex) {
-            fileName = filePrefix + fileIndex + fileSuffix;
-            writeFile(fileName, currentBufferSize, fileSize, clean);
-            currentBufferSize *= 2;
-            fileIndex++;
-        }
-
-        benchScore /= (maxIndex - minIndex + 1);
-
-        String partition;
-        if (filePrefix.contains(":\\")) {
-            partition = filePrefix.substring(0, filePrefix.indexOf(":\\"));
-        } else if (filePrefix.startsWith("/")) {
-            partition = "/";
-        } else {
-            partition = "unknown";
-        }
-
-        System.out.println("File write score on partition " + partition + ": "
-                + String.format("%.2f", benchScore) + " MB/sec");
-
-        return benchScore;  // <-- ADD THIS LINE
+    // Write a file with fixed buffer size and given file size, return speed MB/s
+    public double streamWriteFixedBufferSize(String filePrefix, String fileSuffix,
+                                             int fileIndex, int bufferSize, long fileSize, boolean clean)
+            throws IOException {
+        String fileName = filePrefix + fileIndex + fileSuffix;
+        return writeFile(fileName, bufferSize, fileSize, clean);
     }
 
 
@@ -86,62 +67,26 @@ public class FileWriter {
      *            - size of the write buffer to be used
      */
 
-    public double streamWriteFixedBufferSize(String filePrefix, String fileSuffix,
-                                             int minIndex, int maxIndex, int bufferSize, boolean clean)
-            throws IOException {
-
-        System.out.println("Stream write benchmark with fixed buffer size");
-        long currentFileSize = MIN_FILE_SIZE;
-        int fileIndex = 0;
-        benchScore = 0;
-
-        while (currentFileSize <= MAX_FILE_SIZE
-                && fileIndex <= maxIndex - minIndex) {
-            String fileName = filePrefix + fileIndex + fileSuffix;
-            writeFile(fileName, bufferSize, currentFileSize, clean);
-            currentFileSize *= 2;
-            fileIndex++;
-        }
-
-        benchScore /= (maxIndex - minIndex + 1);
-
-        String partition;
-        if (filePrefix.contains(":\\")) {
-            partition = filePrefix.substring(0, filePrefix.indexOf(":\\"));
-        } else if (filePrefix.startsWith("/")) {
-            partition = "/";
-        } else {
-            partition = "unknown";
-        }
-
-        System.out.println("File write score on partition " + partition + ": "
-                + String.format("%.2f", benchScore) + " MB/sec");
-
-        return benchScore;  // <-- ADD THIS LINE
-    }
 
 
     /**
      * Writes a file with random binary content on the disk, using a given file
      * path and buffer size.
      */
-    private void writeFile(String fileName, int bufferSize,
-                           long fileSize, boolean clean) throws IOException {
+    private double writeFile(String fileName, int bufferSize,
+                             long fileSize, boolean clean) throws IOException {
 
         int lastSepIndex = fileName.lastIndexOf(File.separator);
         File folderPath;
         if (lastSepIndex >= 0) {
             folderPath = new File(fileName.substring(0, lastSepIndex));
-            // create folder path to benchmark output if it doesn't exist
             if (!folderPath.isDirectory())
                 folderPath.mkdirs();
         } else {
-            // no folder path in fileName, use current directory
             folderPath = new File(".");
         }
 
         final File file = new File(fileName);
-        // create stream writer with given buffer size
         final BufferedOutputStream outputStream =
                 new BufferedOutputStream(new FileOutputStream(file), bufferSize);
 
@@ -163,10 +108,20 @@ public class FileWriter {
         outputStream.flush();
         outputStream.close();
 
-        printStats(fileName, fileSize, bufferSize);
+        final long time = timer.stop();
 
-        if (clean)
-            file.deleteOnExit();
+        double seconds = time / 1e9; // ns to sec
+        double megabytes = fileSize / (1024.0 * 1024.0);
+        double rate = megabytes / seconds;
+
+        System.out.println("Done writing " + fileSize + " bytes to file: "
+                + fileName + " in " + String.format("%.2f", seconds) + " s ("
+                + String.format("%.2f", rate) + " MB/sec) with buffer size "
+                + bufferSize / 1024 + " kB");
+
+        if (clean) file.deleteOnExit();
+
+        return rate;
     }
 
 
