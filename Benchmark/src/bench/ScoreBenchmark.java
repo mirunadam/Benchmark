@@ -37,12 +37,13 @@ public class ScoreBenchmark {
 
     // Display all scores for a given list of benchmark data
     public static void printScores(List<BenchmarkData> dataList) {
-        System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s%n", "n", "t", "r", "S1", "S2", "S3");
+        System.out.printf("%-10s  %-10s %-10s %-10s  %-10s    %-10s   %-10s%n", "n", "t", "r", "S1", "S2", "S3", "S4");
         for (BenchmarkData d : dataList) {
             double s1 = scoreS1(d);
             double s2 = scoreS2(d);
             double s3 = scoreS3(d);
-            System.out.printf("%-10.2f %-10.2f %-10.2f %-10.4f %-10.4f %-10.4f%n", d.n, d.t, d.r, s1, s2, s3);
+            double s4 = scoreS4(d);
+            System.out.printf("%-10.2f  %-10.2f %-10.2f %-10.4f   %-10.4f   %-10.4f   %-10.4f%n", d.n, d.t, d.r, s1, s2, s3, s4);
         }
     }
 }

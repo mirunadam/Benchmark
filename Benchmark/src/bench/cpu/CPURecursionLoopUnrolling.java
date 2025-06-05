@@ -39,11 +39,16 @@ public class CPURecursionLoopUnrolling implements IBenchmark {
                 }
             }
         } catch (StackOverflowError e) {
-            System.out.printf("Reached nr %d/%d after %d calls (Stack overflow exe caught).\n", lastReached, size, lastCounter);
+            System.out.printf("Reached nr %d/%d after %d calls (Stack Overflow Error caught).\n", lastReached, size, lastCounter);
         }
 
         long endTime = System.nanoTime();
-        System.out.printf("Finished in %.4f Milli\n", (endTime - startTime) / 1_000_000.0);
+        long elapsed = endTime - startTime;
+        System.out.printf("Finished in %.4f Milli\n", elapsed / 1_000_000.0);
+
+        // Calculate and print the benchmark score
+        double score = computeScore(size, elapsed, lastCounter);
+        System.out.printf("Score: %.4f\n", score);
     }
 
     private long recursive(long start, long size, int counter) {
@@ -77,6 +82,15 @@ public class CPURecursionLoopUnrolling implements IBenchmark {
             if (x % i == 0) return false;
         }
         return true;
+    }
+
+    private double computeScore(int n, long timeNano, int calls) {
+        double timeMs = timeNano / 1_000_000.0;
+        return n / (Math.log(timeMs + 1) * Math.sqrt(calls) + 1);
+    }
+
+    public int getLastCounter() {
+        return lastCounter;
     }
 
     @Override
