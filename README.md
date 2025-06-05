@@ -4,8 +4,13 @@ A modular Java framework for creating and running hardware benchmarks with preci
 Developed for the Digital Computer course at Universitatea Politehnica Timișoara.
 
 Team Members:
-[Damșa Andra-Miruna]
-[Tămășilă Mara]
-[Efrem Isabella-Ariana-Giulia]
-[Pozsar Teodora-Alexia]
-[Tamaș Raul-Valentin]
+
+Damșa Andra-Miruna
+
+Tămășilă Mara
+
+Efrem Isabella-Ariana-Giulia
+
+Pozsar Teodora-Alexia
+
+Tamaș Raul-Valentin
