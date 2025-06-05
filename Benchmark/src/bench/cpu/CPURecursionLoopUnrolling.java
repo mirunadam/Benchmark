@@ -2,6 +2,9 @@ package bench.cpu;
 
 import bench.IBenchmark;
 
+// Benchmarks recursive prime number summation with and without loop unrolling.
+// Measures performance and stack usage while handling possible stack overflows.
+
 public class CPURecursionLoopUnrolling implements IBenchmark {
     private int size;
     private long lastReached = 0;
