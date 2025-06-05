@@ -3,11 +3,6 @@ package testbench;
 import bench.cpu.HDDRandomAccess;
 import bench.IBenchmark;
 
-/**
- * Test class for running and validating HDD/SSD random access benchmarks.
- * Executes read/write tests in both fixed-size and fixed-time modes.
- */
-
 public class TestHDDRandomAccess {
     public static void main(String[] args) {
         // Create benchmark instance
