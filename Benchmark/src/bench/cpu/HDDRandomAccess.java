@@ -8,6 +8,11 @@ import java.util.Random;
 import timing.Timer;
 import bench.IBenchmark;
 
+/**
+ * Benchmark for measuring HDD/SSD random read/write performance using RandomAccessFile.
+ * Supports fixed-size and fixed-time I/O modes for both read and write operations.
+ */
+
 public class HDDRandomAccess implements IBenchmark {
 
     private final static String PATH = "D:\\test.raf";
